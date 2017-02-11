@@ -7,7 +7,15 @@ package com.test;
  *
  */
 public class Singleton {
-//    private static Singleton uniqueInstance;
+	// =================================================** 延迟实例化**============================================================
+//	/**
+//	 *  延迟实例化　在多线程环境下，为了安全性，需要同步，降低了性能，
+//	 *  以空间换时间
+//	 */
+//	/**
+//	 *  volatile 关键字保证　uniqueInstance　线程之间的可见性
+//	 */
+//    private volatile static Singleton uniqueInstance;
 //    
 //    /**
 //     *  构造方法私有化，外部不能访问
@@ -18,7 +26,7 @@ public class Singleton {
 //     * 向外部提供获取该类实例的静态方法
 //     * @return
 //     */
-//    public static synchronized Singleton getInstance(){
+//    public static Singleton getInstance(){
 //        if (uniqueInstance == null) {
 //            
 //            synchronized (Singleton.class) {
@@ -31,15 +39,49 @@ public class Singleton {
 //        }
 //        return uniqueInstance;
 //    }
-    private static Singleton uniqueInstance = new Singleton();
     
-  /**
-   *  构造方法私有化，外部不能访问
-   */
-  private Singleton(){}
+ // =================================================** 延迟实例化**============================================================
+    
+ // =================================================** 急切实例化**============================================================
+    
+//    private static Singleton uniqueInstance = new Singleton();
+//  /**
+//   * 　急切实例化　随着类的加载　jvm　已经创建了　uniqueInstance　
+//   * 　保证了安全性，也提高了性能
+//   * 　但是，占用空间，即便在整个生命周期中，一此不使用　uniqueInstance，uniqueInstance　对象也会一直在内存中
+//   * 　　是以空间换时间的解决办法
+//   *  构造方法私有化，外部不能访问
+//   */
+//  private Singleton(){}
+//  
+//  public static Singleton getInstance(){
+//        
+//        return uniqueInstance;
+//  }
   
-  public static Singleton getInstance(){
-        
-        return uniqueInstance;
-}
+//=================================================** 急切实例化**============================================================
+  
+//=================================================** 最优方案**============================================================
+	
+	/**
+	 *  时间和空间的方案
+	 */
+	
+	/** 
+	 *  私有构造方法，禁止外部访问
+	 */
+	private Singleton(){}
+	
+	/**
+	 *  静态内部类
+	 * @author crg
+	 *
+	 */
+	private static class HolderClass{
+		private static final Singleton uniqueInstance = new Singleton();
+	}
+	public static Singleton getInstance(){
+		return HolderClass.uniqueInstance;
+	}
+//=================================================** 最优方案**============================================================
 }
